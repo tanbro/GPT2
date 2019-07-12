@@ -1,8 +1,22 @@
 import os
-
+from glob import glob
 import tensorflow as tf
 
 # Expects .tfrecords files as produced by the script in datasets in a google storage bucket
+
+# 我的 openwebtext
+def myopenwebtext(params, eval=False, batch=True):
+    all_files = glob(os.path.join(params['data_path'], '1k', 'tfrecord', 'openwebtext_*.tfrecords'))
+    files = []
+    for i, fn in enumerate(all_files):
+        if eval:
+            if i % 10 == 0:
+                files.append(fn)
+        else:
+            if i % 10 != 0:
+                files.append(fn)
+    # files = tf.data.TFRecordDataset(filenames=files)
+    return bpe_text(params["batch_size"], files, amount=params["n_ctx"], iterations=params["iterations"], stitch=16, batch=batch)
 
 # Standard openwebtext
 def openwebtext(params, eval=False, batch=True):

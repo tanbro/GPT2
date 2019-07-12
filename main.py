@@ -19,6 +19,7 @@ models = {
 }
 
 inputs = {
+    "myopenwebtext": myopenwebtext, # Standard OpenWebtext input
     "openwebtext": openwebtext, # Standard OpenWebtext input
     "openwebtext_longbiased": openwebtext_longbiased, # OpenWebtext with a bias towards showing more long (>512 tokens) examples
     "openwebtext_long": openwebtext_long, # Openwebtext that only shows long examples
