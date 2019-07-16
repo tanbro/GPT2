@@ -6,7 +6,7 @@ import tensorflow as tf
 
 # 我的 openwebtext
 def myopenwebtext(params, eval=False, batch=True):
-    all_files = glob(os.path.join(params['data_path'], '1k', 'tfrecord', 'openwebtext_*.tfrecords'))
+    all_files = glob(os.path.join(params['data_path'], '*.tfrecords'))
     files = []
     for i, fn in enumerate(all_files):
         if eval:
