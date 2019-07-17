@@ -159,7 +159,7 @@ if __name__ == "__main__":
             steps=params["train_steps"])
 
         end = time.time()
-        logger.info("\nTrain loop took {:.2f}s\n".format(
+        logger.info("\nTrain loop took {}\n".format(
             timedelta(seconds=end-start)))
 
         eval_result = network.evaluate(
