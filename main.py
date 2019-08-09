@@ -1,4 +1,5 @@
 import argparse
+import os
 import json
 import logging
 import sys
@@ -8,9 +9,18 @@ from functools import partial
 from pathlib import Path
 
 import tensorflow as tf
+from dotenv import load_dotenv
+
 from inputs import *
 from model_fns import *
 from predict_fns import *
+
+
+load_dotenv()
+
+if bool(os.getenv('TF_EAGER_EXECUTION', False)):
+    tf.enable_eager_execution()
+    tf.executing_eagerly()
 
 # This program was designed to function with multiple kinds of models, but currently only GPT2 is supported
 # The first element in the tupel is the model function, the second is the function called when predicting
