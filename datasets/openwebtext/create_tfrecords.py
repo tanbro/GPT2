@@ -72,11 +72,11 @@ def create_file(args, data):
     if os.path.exists(os.path.join(output_dir, s)):  # Unfinished file, remove
         os.remove(os.path.join(output_dir, s))
 
-    with tf.python_io.TFRecordWriter(os.path.join(output_dir, s)) as writer:
+    with tf.io.TFRecordWrite(os.path.join(output_dir, s)) as writer:
         good_files = 0
         current = None
         for fn in files:
-            with tf.gfile.Open(fn, "r") as f:
+            with tf.io.gfile.Open(fn, "r") as f:
                 d = f.read()
             d = ftfy.fix_text(d, normalization='NFKC')
             data = np.array(enc.encode(d), np.int32)
