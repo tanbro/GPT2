@@ -1,10 +1,10 @@
-import sys
 import argparse
 import glob
 import os
+import sys
 import time
-from multiprocessing import Pool
 from functools import partial
+from multiprocessing import Pool
 from pathlib import Path
 
 import ftfy
@@ -55,6 +55,14 @@ def make_chunks(iterable, size):
     return list(make_chunks_lazy(iterable, size))
 
 
+enc = None
+
+
+def pool_init(args):
+    global enc
+    enc = encoder.get_spm_bpe_encoder(args.bpe_model)
+
+
 def create_file(args, data):
     output_dir = args.output_dir
     output_name = args.output_name
@@ -63,20 +71,20 @@ def create_file(args, data):
     #
     index, files = data
     #
-    enc = encoder.get_spm_bpe_encoder(encoder_path)
     s = '{}_{}.tfrecords'.format(output_name, index)
     # Hack-y, if file of same name is in log dir, sign that the file is complete, so skip
     if os.path.exists(os.path.join(logs_dir, s)):
-        print(f'file of same name {s!r} is in log dir!', file=sys.stderr)
+        print(
+            f'file of same name "{s}" is in log dir "{logs_dir}" !', file=sys.stderr)
         return
     if os.path.exists(os.path.join(output_dir, s)):  # Unfinished file, remove
         os.remove(os.path.join(output_dir, s))
 
-    with tf.io.TFRecordWrite(os.path.join(output_dir, s)) as writer:
+    with tf.io.TFRecordWriter(os.path.join(output_dir, s)) as writer:
         good_files = 0
         current = None
         for fn in files:
-            with tf.io.gfile.Open(fn, "r") as f:
+            with tf.io.gfile.GFile(fn, "r") as f:
                 d = f.read()
             d = ftfy.fix_text(d, normalization='NFKC')
             data = np.array(enc.encode(d), np.int32)
@@ -131,19 +139,22 @@ def main(args):
     processes = args.processes
     logs_dir = args.logs_dir
     #
+    print(f'输出目录: {output_dir}')
     os.makedirs(output_dir, exist_ok=True)
+    print(f'日志目录: {output_dir}')
     os.makedirs(logs_dir, exist_ok=True)
+    print(f'匹配文件: {input_pat} ...')
     files = glob.glob(input_pat, recursive=True)
     file_chunks = make_chunks(files, files_per_chunk)
-
     print("Got {} files, divided into {} chunks.".format(
         len(files), len(file_chunks)))
 
     start = time.time()
-    pool = Pool(processes=processes)
+    pool = Pool(processes=processes, initializer=pool_init, initargs=(args,))
     good = 0
     for g in tqdm(
-        pool.imap_unordered(partial(create_file, args), enumerate(file_chunks)),
+        pool.imap_unordered(partial(create_file, args),
+                            enumerate(file_chunks)),
         total=len(file_chunks)
     ):
         good += g
