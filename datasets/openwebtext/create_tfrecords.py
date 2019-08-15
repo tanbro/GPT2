@@ -71,16 +71,18 @@ def create_file(args, data):
     #
     index, files = data
     #
+    #
     s = '{}_{}.tfrecords'.format(output_name, index)
+    output_path = os.path.join(output_dir, s)
     # Hack-y, if file of same name is in log dir, sign that the file is complete, so skip
     if os.path.exists(os.path.join(logs_dir, s)):
         print(
             f'file of same name "{s}" is in log dir "{logs_dir}" !', file=sys.stderr)
         return
-    if os.path.exists(os.path.join(output_dir, s)):  # Unfinished file, remove
-        os.remove(os.path.join(output_dir, s))
+    if os.path.exists(output_path):  # Unfinished file, remove
+        os.remove(output_path)
 
-    with tf.io.TFRecordWriter(os.path.join(output_dir, s)) as writer:
+    with tf.io.TFRecordWriter(output_path) as writer:
         good_files = 0
         current = None
         for fn in files:
@@ -100,6 +102,11 @@ def create_file(args, data):
                 features=tf.train.Features(feature=feature))
             writer.write(tf_example.SerializeToString())
             good_files += 1
+
+    # 如果没有一个有效的，删除目标文件
+    if good_files == 0:
+        os.remove(output_path)
+
     # File complete
     # Create mark that file is finished in logdir
     with open(os.path.join(logs_dir, s), "w") as f:
