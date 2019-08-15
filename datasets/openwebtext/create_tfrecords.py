@@ -9,7 +9,7 @@ from pathlib import Path
 
 import ftfy
 import numpy as np
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 import tensorflow as tf
 

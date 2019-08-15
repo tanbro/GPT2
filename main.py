@@ -29,7 +29,9 @@ models = {
 }
 
 inputs = {
-    "myopenwebtext": myopenwebtext,  # Standard OpenWebtext input
+    "myopenwebtext": myopenwebtext,  # Custome input
+    "gpt2_huamei_corpus_seg_tsv_128k": gpt2_huamei_corpus_seg_tsv_128k, # input function from Kang.Z.H
+    "gpt2_huamei_corpus_seg_with_jieba_190808_mid": gpt2_huamei_corpus_seg_with_jieba_190808_mid,   # Custome input
     "openwebtext": openwebtext,  # Standard OpenWebtext input
     # OpenWebtext with a bias towards showing more long (>512 tokens) examples
     "openwebtext_longbiased": openwebtext_longbiased,
@@ -68,7 +70,7 @@ if __name__ == "__main__":
     Path("logs").mkdir(exist_ok=True)
     tf.logging.set_verbosity(logging.INFO)
     handlers = [
-        logging.FileHandler('logs/{}.log'.format(args.model)),
+        logging.FileHandler('logs/{}.log'.format(os.path.basename(args.model))),
         logging.StreamHandler(sys.stdout)
     ]
     logger = logging.getLogger('tensorflow')
