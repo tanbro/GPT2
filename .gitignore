@@ -1,6 +1,7 @@
 *.lock
 *.dirlock
 
+config/
 logs/
 out/
 models/
