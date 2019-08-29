@@ -69,7 +69,7 @@ def model_fn(
         loss = tf.reduce_mean(loss_batch)
 
     if mode == tf.estimator.ModeKeys.TRAIN:
-        train_op = create_train_op(loss, params)
+        train_op = create_train_op(loss, params['optimizer'])
         return tf.estimator.EstimatorSpec(mode, loss=loss, train_op=train_op)
 
     if mode == tf.estimator.ModeKeys.EVAL:
