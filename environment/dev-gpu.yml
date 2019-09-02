@@ -1,0 +1,14 @@
+name: gpt_2-dev-gpu
+dependencies:
+  - tensorflow-gpu<2.0
+  - requests
+  - tqdm
+  - pyyaml
+  - python-dotenv
+  - pip:
+    - sentencepiece
+  - wasabi
+  - ipython
+  - nb_conda
+  - pandas
+  - matplotlib

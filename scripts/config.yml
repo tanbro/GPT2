@@ -15,18 +15,18 @@ input: &INPUT
   batch_size: 1
   prefetch_buffer_size: 0
 
-epochs: 1
+epochs: 30
 
 estimator:
   hparams:
     <<: *HPARAMS
 
-  train_steps: 10
+  train_steps: 100
   train_input:
     <<: *INPUT
     data_files: ../../data/wiki_zh.train.tfrecords
 
-  eval_steps: 1
+  eval_steps: 10
   eval_input:
     <<: *INPUT
     data_files: ../../data/wiki_zh.valid.tfrecords
